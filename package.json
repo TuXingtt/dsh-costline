@@ -1,0 +1,50 @@
+{
+    "name":  "dsh-costline",
+    "version":  "0.8.0",
+    "description":  "DeepSeek Harness spend meter on one line: today/week/month/total windows, API-key vs signed-in-account split, live official pricing (peak/off-peak), usage rebuilt from session logs, plus both wallet balances.",
+    "type":  "module",
+    "main":  "index.js",
+    "exports":  {
+                    ".":  "./index.js",
+                    "./client":  "./client.js",
+                    "./package.json":  "./package.json"
+                },
+    "files":  [
+                  "index.js",
+                  "client.js",
+                  "cordis.patch.yml",
+                  "README.md",
+                  "LICENSE"
+              ],
+    "keywords":  [
+                     "dsh",
+                     "dsh-plugin",
+                     "deepseek-harness",
+                     "billing",
+                     "usage",
+                     "cost",
+                     "token",
+                     "balance"
+                 ],
+    "license":  "MIT",
+    "engines":  {
+                    "node":  "^22.19.0 || \u003e=24.0.0",
+                    "dsh":  "\u003e=0.2.0"
+                },
+    "dsh":  {
+                "bundle":  {
+                               "patch":  "./cordis.patch.yml"
+                           },
+                "client":  {
+                               "inject":  [
+
+                                          ],
+                               "platform":  "web"
+                           },
+                "compatibility":  {
+                                      "dshReleases":  {
+                                                          "0.2.1-rc.2":  "compatible"
+                                                      }
+                                  }
+            }
+}

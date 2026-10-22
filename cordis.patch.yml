@@ -1,0 +1,6 @@
+# dsh-costline bundle layer: mount the plugin.
+# Host half (lib/index.js) folds session usage per channel/window and serves
+# GET /dsh-billing/summary. Browser half (lib/client.js) renders the composer row.
+- insert:
+    - id: costline
+      name: dsh-costline
