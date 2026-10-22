@@ -14,7 +14,7 @@
 - **两个通道分开算**：`API key` 与 `登录账户` 各自计费、各自余额；可切「合计 / API / 账户」。
 - **金额跟随官网**：单价每小时从 [官方定价页](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) 抓一次人民币价，峰谷（北京时间工作日 09:00–12:00、14:00–18:00 高峰 ×2）自动切换；抓不到时回落内置价表。
 - **历史可回溯**：启动后扫描 `<DSH_HOME>/sessions/**/*.jsonl.zstd`，把每一步 `assistant/message` 的精确 usage 按发生时刻计价写回账本，所以「今日/累计」覆盖日志保留的全部历史，而不是从安装那一刻算起；`seq` 去重，重复回溯不会翻倍。
-- **持久账本**：`<DSH_HOME>/storages/dsh-billing-ledger.json`（按天分桶，含 token 与费用），重启不丢。
+- **持久账本**：`<DSH_HOME>/storages/dsh-costline-ledger.json`（按天分桶，含 token 与费用），重启不丢。
 - **余额**：API key 走 `GET /user/balance`，登录账户走账户钱包；60 秒缓存，失败降级不挡显示。
 
 ## 为什么两个通道的取数不一样
@@ -28,9 +28,10 @@
 ## 安装
 
 ```bash
-# 方式一：插件管理里选 install_bundle，指向 tgz
-# 方式二：CLI
+# 方式一：CLI（tgz 在仓库根目录或 Release 附件里）
 dsh plugin add file:/绝对路径/dsh-costline-0.8.0.tgz
+
+# 方式二：插件管理里选 install_bundle，指向同一个 tgz
 ```
 
 重启 DSH 后，输入框下方出现这一行。
@@ -47,12 +48,18 @@ dsh plugin add file:/绝对路径/dsh-costline-0.8.0.tgz
 ## 结构
 
 ```
-lib/index.js      宿主：session/event 折叠、账本持久化、会话日志回溯、定价页解析、GET /dsh-billing/summary
-lib/client.js     浏览器：composer dock 一行 + 两个下拉 + 余额
+index.js          宿主：session/event 折叠、账本持久化、会话日志回溯、定价页解析、GET /dsh-costline/summary
+client.js         浏览器：composer dock 一行 + 两个下拉 + 余额
 cordis.patch.yml  挂载行（id: costline）
+package.json      dsh.bundle.patch + dsh.client（platform: web）
 ```
 
-只读接口：`GET /dsh-billing/summary?sessionId=<id>[&refresh=1]`
+只读接口：`GET /dsh-costline/summary?sessionId=<id>[&refresh=1]`
+
+## 隐私
+
+- 插件不打包任何密钥；API key 运行时由宿主 `credentials` 服务读取，不落盘、不出现在日志里。
+- 账本只记 token 数与金额，写入 `<DSH_HOME>/storages/`，不会上传。
 
 ## License
 
